@@ -157,6 +157,52 @@ function normalizeMatchCore(raw: JsonObject) {
   });
 }
 
+function normalizeLeagueTableStanding(raw: JsonObject) {
+  return compact({
+    teamId: stringOrUndefined(raw.team_id),
+    teamName: stringOrUndefined(raw.team_name),
+    currentStanding: numberOrUndefined(raw.current_standing),
+    startingPoints: numberOrUndefined(raw.starting_points),
+    points: numberOrUndefined(raw.points),
+    matchesPlayed: numberOrUndefined(raw.matches_played),
+    matchesWon: numberOrUndefined(raw.matches_won),
+    matchesTied: numberOrUndefined(raw.matches_tied),
+    matchesLost: numberOrUndefined(raw.matches_lost),
+    goalsFor: numberOrUndefined(raw.goals_for),
+    goalsAgainst: numberOrUndefined(raw.goals_against),
+    pointsHome: numberOrUndefined(raw.points_home),
+    matchesPlayedHome: numberOrUndefined(raw.matches_played_home),
+    matchesWonHome: numberOrUndefined(raw.matches_won_home),
+    matchesTiedHome: numberOrUndefined(raw.matches_tied_home),
+    matchesLostHome: numberOrUndefined(raw.matches_lost_home),
+    goalsForHome: numberOrUndefined(raw.goals_for_home),
+    goalsAgainstHome: numberOrUndefined(raw.goals_against_home),
+    pointsAway: numberOrUndefined(raw.points_away),
+    matchesPlayedAway: numberOrUndefined(raw.matches_played_away),
+    matchesWonAway: numberOrUndefined(raw.matches_won_away),
+    matchesTiedAway: numberOrUndefined(raw.matches_tied_away),
+    matchesLostAway: numberOrUndefined(raw.matches_lost_away),
+    goalsForAway: numberOrUndefined(raw.goals_for_away),
+    goalsAgainstAway: numberOrUndefined(raw.goals_against_away),
+  });
+}
+
+function normalizeLeagueTablePlayerStatistic(raw: JsonObject) {
+  return compact({
+    playerId: stringOrUndefined(raw.player_id),
+    playerName: stringOrUndefined(raw.player_name),
+    firstName: stringOrUndefined(raw.first_name),
+    lastName: stringOrUndefined(raw.last_name),
+    teamId: stringOrUndefined(raw.team_id),
+    teamName: stringOrUndefined(raw.team_name),
+    goals: numberOrUndefined(raw.goals),
+    assists: numberOrUndefined(raw.assists),
+    warnings: numberOrUndefined(raw.warnings),
+    suspensions: numberOrUndefined(raw.suspensions),
+    playingTime: numberOrUndefined(raw.playing_time),
+  });
+}
+
 export function normalizeSeason(raw: JsonObject) {
   return compact({
     seasonId: stringOrUndefined(raw.season_id),
@@ -189,6 +235,34 @@ export function normalizeCategory(raw: JsonObject) {
     categoryGroupName: stringOrUndefined(raw.category_group_name),
     categoryLink: stringOrUndefined(raw.category_link),
     authorized: booleanFlagOrUndefined(raw.authorized),
+  });
+}
+
+export function normalizeLeagueTableDetail(raw: JsonObject) {
+  const teams = Array.isArray(raw.teams) ? raw.teams.filter(isObject) : [];
+  const liveStandings = Array.isArray(raw.live_standings) ? raw.live_standings.filter(isObject) : [];
+  const playerStatistics = Array.isArray(raw.player_statistics) ? raw.player_statistics.filter(isObject) : [];
+  const matches = Array.isArray(raw.matches) ? raw.matches.filter(isObject) : [];
+
+  return compact({
+    competitionId: stringOrUndefined(raw.competition_id),
+    competitionName: stringOrUndefined(raw.competition_name),
+    seasonId: stringOrUndefined(raw.season_id),
+    categoryId: stringOrUndefined(raw.category_id),
+    categoryName: stringOrUndefined(raw.category_name),
+    groupId: stringOrUndefined(raw.group_id),
+    groupName: stringOrUndefined(raw.group_name),
+    groupType: stringOrUndefined(raw.group_type),
+    notices: compact({
+      categoryNotice: stringOrUndefined(raw.category_notice),
+      categoryNoticeFull: stringOrUndefined(raw.category_notice_full),
+      groupNotice: stringOrUndefined(raw.group_notice),
+      groupNoticeFull: stringOrUndefined(raw.group_notice_full),
+    }),
+    teams: compact(teams.map((team) => normalizeLeagueTableStanding(team))),
+    liveStandings: compact(liveStandings.map((standing) => normalizeLeagueTableStanding(standing))),
+    playerStatistics: compact(playerStatistics.map((player) => normalizeLeagueTablePlayerStatistic(player))),
+    matches: matches.length > 0 ? compact(matches.map((match) => normalizeMatchSummary(match))) : undefined,
   });
 }
 

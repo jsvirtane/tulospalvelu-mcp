@@ -8,6 +8,7 @@ Read-only MCP server for the Palloliitto's result service API.
 - Search clubs, teams, players, competitions and venues data through the open search endpoint for football & futsal.
 - Find and inspect match data.
 - Discover competitions, historical season data.
+- Inspect league tables, player statistics, and optional embedded group matches.
 - Return normalized, LLM-friendly JSON payloads over MCP `stdio`.
 
 ## Get started
@@ -76,6 +77,7 @@ The server reads configuration from environment variables.
 - `list_competitions`
 - `get_competition`
 - `list_categories`
+- `get_league_table`
 - `list_matches`
 - `get_match`
 - `get_match_score`

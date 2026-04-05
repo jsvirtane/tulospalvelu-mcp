@@ -53,6 +53,20 @@ export class TasoRestClient {
     });
   }
 
+  getLeagueTable(params: {
+    competitionId: string;
+    categoryId: string;
+    groupId: string;
+    matches?: number;
+  }) {
+    return this.request("getGroup", {
+      competition_id: params.competitionId,
+      category_id: params.categoryId,
+      group_id: params.groupId,
+      matches: params.matches,
+    });
+  }
+
   getMatches(params: {
     seasonId?: string;
     competitionId?: string;

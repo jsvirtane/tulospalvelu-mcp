@@ -13,6 +13,7 @@ import { resolveDateFilters } from "./lib/dates.js";
 import {
   normalizeCategory,
   normalizeCompetition,
+  normalizeLeagueTableDetail,
   normalizeMatchDetail,
   normalizeMatchSummary,
   normalizePlayerDetail,
@@ -224,6 +225,35 @@ async function main() {
   );
 
   server.registerTool(
+    "get_league_table",
+    {
+      title: "Get League Table",
+      description: "Get detailed league table data, standings, player statistics, and optionally matches for a single group.",
+      inputSchema: {
+        competitionId: z.string().min(1),
+        categoryId: z.string().min(1),
+        groupId: z.string().min(1),
+        includeMatches: z.boolean().optional(),
+      },
+    },
+    async ({ competitionId, categoryId, groupId, includeMatches }) => {
+      try {
+        const response = await restClient.getLeagueTable({
+          competitionId,
+          categoryId,
+          groupId,
+          matches: includeMatches ? 1 : undefined,
+        });
+        const leagueTable = normalizeLeagueTableDetail(extractSingle(response, "group"));
+
+        return successResult(leagueTable);
+      } catch (error) {
+        return errorResult(error);
+      }
+    },
+  );
+
+  server.registerTool(
     "list_matches",
     {
       title: "List Matches",
@@ -416,7 +446,6 @@ async function main() {
       }
     },
   );
-
   const transport = new StdioServerTransport();
   await server.connect(transport);
 }
